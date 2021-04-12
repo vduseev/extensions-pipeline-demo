@@ -1,4 +1,4 @@
-name: External PR
+name: External PR Build
 
 on:
   pull_request:
@@ -24,7 +24,8 @@ jobs:
         with:
           python-version: 3.9
 
-      - uses: ./.github/actions/dtextcli-setup
+      - name: Install dtextcli
+        uses: ./.github/actions/dtextcli-setup
 
       - name: Build extension using dtextcli
         uses: ./.github/actions/build
