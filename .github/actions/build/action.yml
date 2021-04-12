@@ -12,5 +12,5 @@ runs:
       shell: bash
 
     - name: Package extension
-      run: dtcli build --extension-directory . --target-directory /tmp/build
+      run: dtcli build --extension-directory ./src --target-directory /tmp/build
       shell: bash

@@ -25,4 +25,6 @@ jobs:
           python-version: 3.9
 
       - uses: ./.github/actions/dtextcli-setup
-      - uses: ./.github/actions/build
+
+      - name: Build extension using dtextcli
+        uses: ./.github/actions/build
