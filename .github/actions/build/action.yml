@@ -1,0 +1,16 @@
+name: Build extension
+description: Build extension using dtcli
+runs:
+  using: "composite"
+  steps:
+    - name: Generate self-signed CA keys
+      run: dtcli genca
+      shell: bash
+
+    - name: Generate self-signed Developer keys
+      run: dtcli gendevcert
+      shell: bash
+
+    - name: Package extension
+      run: dtcli build --extension-directory . --target-directory /tmp/build
+      shell: bash

@@ -1,0 +1,8 @@
+name: Setup dtextcli
+description: Setup dtextcli
+runs:
+  using: "composite"
+  steps:
+    - name: Install dtextcli
+      run: pip install dtextcli
+      shell: bash

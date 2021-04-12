@@ -1,0 +1,81 @@
+# name: public
+
+# on:
+#   push:
+#     branches:
+#       - stage
+
+# jobs:
+#   build:
+#     name: build
+#     runs-on: [self-hosted, public]
+
+#     steps:
+#       - name: Checkout repo
+#         uses: actions/checkout@v2
+
+#       - name: Generate self-signed CA keys
+#         run: |
+#           dtcli genca
+
+#       - name: Generate self-signed Developer keys
+#         run: |
+#           dtcli gendevcert
+
+#       - name: Verify extension schema
+#         run: |
+#           grep "version" src/extension.yaml
+
+#       - name: Bump patch version
+#         run: |
+#           sed -i "s/\(version: [[:digit:]]\.[[:digit:]]\).*/\1.$GITHUB_RUN_NUMBER/" ./src/extension.yaml
+
+#       - name: Package extension
+#         run: |
+#           dtcli build --extension-directory . --target-directory /tmp/build
+
+#   stage:
+#     name: stage
+#     runs-on: [self-hosted, public]
+#     needs: [build]
+
+#     steps:
+#       - name: version
+#         id: version
+#         run: echo "::set-output name=version::0.1.$GITHUB_RUN_NUMBER"
+
+#       - name: release_name
+#         id: release_name
+#         run: echo "::set-output name=release_name::prerelease-0.1.$GITHUB_RUN_NUMBER"
+
+#       - name: build_path
+#         id: build_path
+#         run: echo "::set-output name=build_path::/tmp/build/com.dynatrace.palo-alto.generic-0.1.$GITHUB_RUN_NUMBER.zip"
+
+#       - name: build_name
+#         id: build_name
+#         run: echo "::set-output name=build_name::com.dynatrace.palo-alto.generic-0.1.$GITHUB_RUN_NUMBER.zip"
+
+#       - name: Run datasource
+
+#       - name: Release package
+#         uses: actions/create-release@v1
+#         id: create_release
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         with:
+#           draft: false
+#           prerelease: false
+#           release_name: ${{ steps.release_name.outputs.release_name }}
+#           tag_name: ${{ steps.release_name.outputs.release_name }}
+#           body: "Pre-Release 0.1.${GITHUB_RUN_NUMBER}"
+
+#       - name: Upload release
+#         uses: actions/upload-release-asset@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         with:
+#           upload_url: ${{ steps.create_release.outputs.upload_url }}
+#           asset_path: ${{ steps.build_path.outputs.build_path }}
+#           asset_name: ${{ steps.build_name.outputs.build_name }}
+#           asset_content_type: application/zip

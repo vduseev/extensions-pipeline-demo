@@ -1,0 +1,73 @@
+# name: public
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   build:
+#     name: build
+#     runs-on: [self-hosted, public]
+
+#     steps:
+#       - name: Checkout repo
+#         uses: actions/checkout@v2
+
+#       - name: Generate self-signed CA keys
+#         run: |
+#           dtcli genca
+
+#       - name: Generate self-signed Developer keys
+#         run: |
+#           dtcli gendevcert
+
+#       - name: Verify extension schema
+#         run: |
+#           grep "version" src/extension.yaml
+
+#       - name: Package extension
+#         run: |
+#           dtcli build --extension-directory . --target-directory /tmp/build
+
+#   stage:
+#     name: stage
+#     runs-on: [self-hosted, public]
+#     needs: [build]
+
+#     steps:
+#       - name: version
+#         run: echo "::set-output name=version::$(0.1.${GITHUB_RUN_NUMBER})"
+#         id: version
+
+#       - name: Release package
+#         uses: actions/create-release@v1
+#         id: create_release
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         with:
+#           draft: false
+#           prerelease: false
+#           release_name: "release-0.1.${GITHUB_RUN_NUMBER}"
+#           tag_name: "release-0.1.${GITHUB_RUN_NUMBER}"
+#           body: "Release 0.1.${GITHUB_RUN_NUMBER}"
+
+#       - name: Upload release
+#         uses: actions/upload-release-asset@v1
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         with:
+#           upload_url: ${{ steps.create_release.outputs.upload_url }}
+#           asset_path: "/tmp/build/com.dynatrace.palo-alto.generic-0.1.6.zip"
+#           asset_name: "com.dynatrace.palo-alto.generic-0.1.${GITHUB_RUN_NUMBER}.zip"
+#           asset_content_type: application/zip
+
+#   release:
+#     name: release
+#     runs-on: [self-hosted, public]
+#     needs: [build, stage]
+
+#     steps:
+#       - name: Push to bitbucket
+#         run: |
+#           echo "Push to repo"
